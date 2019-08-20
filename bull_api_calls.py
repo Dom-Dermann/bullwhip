@@ -1,7 +1,7 @@
 import requests
 import json
 
-def get_stock_info(company_short):
+def get_income_statements(company_short):
     api_url_income_statement = f'https://financialmodelingprep.com/api/v3/financials/income-statement/{company_short}'
 
     response = requests.get(api_url_income_statement)

@@ -1,4 +1,3 @@
-import bull_api_calls
 import bull_ratio_calculation
 import argparse
 
@@ -8,6 +7,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     c_symbol = args.company_symbol[0]
 
-    historical_is = bull_api_calls.get_stock_info(c_symbol)
-    if historical_is is not None:
-        bull_ratio_calculation.calc_income_ratios(historical_is)
+    company = bull_ratio_calculation.company(c_symbol)
+    company.calculate_ratios()
