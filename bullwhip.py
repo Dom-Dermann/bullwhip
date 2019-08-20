@@ -9,3 +9,4 @@ if __name__ == "__main__":
 
     company = bull_ratio_calculation.company(c_symbol)
     company.calculate_ratios()
+    company.get_screening_indicators()
