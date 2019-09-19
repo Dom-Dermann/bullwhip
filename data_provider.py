@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from selenium import webdriver
 import requests
 import json
 import pandas as pd
@@ -10,10 +11,21 @@ import urllib
 # results are then saved to local sqlite3 database
 def get_balance_sheet(symbol):
     URL = 'https://finance.yahoo.com/quote/' + symbol + '/balance-sheet?p=' + symbol
-    page = requests.get(URL)
-    
 
-    return df
+    browser = webdriver.Chrome()
+    browser.get(URL)
+    page = browser.page_source
+
+    # check for website answer
+    if page.status_code != 200:
+        raise Exception("Company data could not be retrieved.")
+    
+    soup = BeautifulSoup(page.text, 'lxml')
+    
+    with open("page.html", "w") as f:
+        f.write(str(soup.prettify))
+        
+    return soup.find_all('table')
 
 # implements API calls as backup (only works for US traded stocks)
 def get_income_statements_from_API(company_short):
