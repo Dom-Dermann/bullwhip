@@ -5,6 +5,10 @@ import json
 import pandas as pd
 import urllib
 
+# path to chrome driver, defautl set to windows 
+# chrome version needs to be 78
+# TODO add OS detection and multiple drivers
+driver_path = "./chromedriver"
 
 # This scrapes the yahoo finance page
 # ATTENTION - this may need updating as the yahoo finance website layout changes
@@ -12,14 +16,10 @@ import urllib
 def get_balance_sheet(symbol):
     URL = 'https://finance.yahoo.com/quote/' + symbol + '/balance-sheet?p=' + symbol
 
-    browser = webdriver.Chrome()
+    browser = webdriver.Chrome(executable_path = driver_path)
     browser.get(URL)
     page = browser.page_source
-
-    # check for website answer
-    if page.status_code != 200:
-        raise Exception("Company data could not be retrieved.")
-    
+        
     soup = BeautifulSoup(page.text, 'lxml')
     
     with open("page.html", "w") as f:
