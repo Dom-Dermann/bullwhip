@@ -1,8 +1,8 @@
-import bull_api_calls
+import data_provider
 import numpy as np
 import pandas as pd
 
-class company:
+class Company:
     company_symbol = ""
     historical_income_statements = []
     key_metrics = []
@@ -10,8 +10,8 @@ class company:
     # constructor
     def __init__(self, symbol):
         self.company_symbol = symbol
-        self.historical_income_statements = bull_api_calls.get_income_statements(self.company_symbol)
-        self.key_metrics = bull_api_calls.get_key_metrics(self.company_symbol)
+        self.historical_income_statements = data_provider.get_income_statements_from_API(self.company_symbol)
+        self.key_metrics = data_provider.get_key_metrics_from_API(self.company_symbol)
 
     # method to calculate all ratios
     def calculate_ratios(self):
