@@ -13,19 +13,25 @@ driver_path = "./chromedriver"
 # This scrapes the yahoo finance page
 # ATTENTION - this may need updating as the yahoo finance website layout changes
 # results are then saved to local sqlite3 database
-def get_balance_sheet(symbol):
-    URL = 'https://finance.yahoo.com/quote/' + symbol + '/balance-sheet?p=' + symbol
+def get_income_statement(symbol):
+    # TODO: uncomment after development
+    # URL = 'https://finance.yahoo.com/quote/DAI.DE/financials?p=DAI.DE'
 
-    browser = webdriver.Chrome(executable_path = driver_path)
-    browser.get(URL)
-    page = browser.page_source
-        
-    soup = BeautifulSoup(page.text, 'lxml')
+    # response = requests.get(URL)
     
-    with open("page.html", "w") as f:
-        f.write(str(soup.prettify))
+    # soup = BeautifulSoup(response.text, 'lxml')
+    # table = str(soup.find('table'))
+    # if table:
+    #     df = pd.DataFrame(pd.read_html(table)[0])
+    #     # convert index and columns
+    #     df.columns = df.iloc[0]
+    #     df = df.drop([0])
+    #     df = df.set_index('Revenue')
+    #     print(df.head())
+    #     df.to_csv('./income_statement.csv')
+
+    df = pd.read_csv('./income_statement.csv')
         
-    return soup.find_all('table')
 
 # implements API calls as backup (only works for US traded stocks)
 def get_income_statements_from_API(company_short):

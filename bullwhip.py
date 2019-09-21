@@ -16,5 +16,5 @@ if __name__ == "__main__":
     # company.calculate_ratios()
     # company.get_screening_indicators()
 
-    bs = data_provider.get_balance_sheet(c_symbol)
+    bs = data_provider.get_income_statement(c_symbol)
     print(bs)
