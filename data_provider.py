@@ -1,9 +1,8 @@
 from bs4 import BeautifulSoup
-from selenium import webdriver
 import requests
-import json
 import pandas as pd
 import urllib
+import db_handler
 
 # path to chrome driver, defautl set to windows 
 # chrome version needs to be 78
@@ -30,7 +29,11 @@ def get_income_statement(symbol):
     #     print(df.head())
     #     df.to_csv('./income_statement.csv')
 
-    df = pd.read_csv('./income_statement.csv')
+    df = pd.read_csv('./income_statement.csv', index_col='Revenue')
+
+    # save income statement data to data base
+    
+    print(df)
         
 
 # implements API calls as backup (only works for US traded stocks)
