@@ -2,38 +2,52 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 import urllib
+import json
 import db_handler
 
-# path to chrome driver, defautl set to windows 
-# chrome version needs to be 78
-# TODO add OS detection and multiple drivers
-driver_path = "./chromedriver"
+# path to local database
+database = "./stock_db.db"
 
 # This scrapes the yahoo finance page
 # ATTENTION - this may need updating as the yahoo finance website layout changes
 # results are then saved to local sqlite3 database
 def get_income_statement(symbol):
-    # TODO: uncomment after development
-    # URL = 'https://finance.yahoo.com/quote/DAI.DE/financials?p=DAI.DE'
+    URL = 'https://finance.yahoo.com/quote/DAI.DE/financials?p=DAI.DE'
 
-    # response = requests.get(URL)
+    response = requests.get(URL)
     
-    # soup = BeautifulSoup(response.text, 'lxml')
-    # table = str(soup.find('table'))
-    # if table:
-    #     df = pd.DataFrame(pd.read_html(table)[0])
-    #     # convert index and columns
-    #     df.columns = df.iloc[0]
-    #     df = df.drop([0])
-    #     df = df.set_index('Revenue')
-    #     print(df.head())
-    #     df.to_csv('./income_statement.csv')
+    soup = BeautifulSoup(response.text, 'lxml')
+    table = str(soup.find('table'))
+    if table:
+        df = pd.DataFrame(pd.read_html(table)[0])
+        # convert index and columns
+        df.columns = df.iloc[0]
+        df = df.drop([0])
+        df = df.set_index('Revenue')
 
-    df = pd.read_csv('./income_statement.csv', index_col='Revenue')
+        #clean up the data
+        df = df.drop(['Operating Expenses', 'Income from Continuing Operations', 'Non-recurring Events', 'Net Income'])
+        
+        # create connection to DB
+        conn = db_handler.create_connection(database)
 
-    # save income statement data to data base
-    
-    print(df)
+        # create income statements tables if not there yet
+        if conn is not None:
+            db_handler.create_table(conn, db_handler.create_income_statements_table)
+            conn.commit()
+        else:
+            print('Error, DB connection not established.')
+
+        # save income statement data to table
+        # list of data for one year:
+        df = df.swapaxes('index', 'columns')
+        one_year = df.iloc[0].tolist()
+        #get date from dataframe header and add
+        date = list(df.index.values)[1]
+        one_year.insert(0, date)
+        #add company symbol
+        one_year.insert(0, symbol)
+        db_handler.insert_income_statement_data(conn, one_year)
         
 
 # implements API calls as backup (only works for US traded stocks)

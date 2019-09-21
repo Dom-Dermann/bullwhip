@@ -15,6 +15,26 @@ create_income_statements_table = """ CREATE TABLE IF NOT EXISTS income_statement
     year date, 
     total_revenue integer, 
     cost_of_revenue integer,
+    gross_profit integer, 
+    research_development integer, 
+    selling_general_and_administrativ integer, 
+    non_recurring integer, 
+    others integer, 
+    total_operating_expenses integer, 
+    operating_income integer, 
+    total_other_income integer, 
+    EBITA integer, 
+    interest_expense integer, 
+    IBT integer, 
+    income_tax_expense integer, 
+    minority_interest integer, 
+    net_income_from_continuing_ops integer, 
+    discontinued_operations integer, 
+    extraordinary_items integer,
+    effect_of_accounting_changes integer,
+    other_items integer,
+    preferred_stock integer,
+    net_income_applicable_to_common_shares integer,
     FOREIGN KEY (symbol) REFERENCES companies (symbol)
 );"""
 
@@ -37,6 +57,40 @@ def create_table(conn, create_table_sql):
     except Error as e:
         print(e)
 
+def insert_income_statement_data(conn, income_statement):
+    sql = """ INSERT INTO income_statements (
+    symbol,
+    year, 
+    total_revenue, 
+    cost_of_revenue,
+    gross_profit, 
+    research_development, 
+    selling_general_and_administrativ, 
+    non_recurring, 
+    others, 
+    total_operating_expenses, 
+    operating_income, 
+    total_other_income, 
+    EBITA, 
+    interest_expense, 
+    IBT, 
+    income_tax_expense, 
+    minority_interest, 
+    net_income_from_continuing_ops, 
+    discontinued_operations, 
+    extraordinary_items,
+    effect_of_accounting_changes,
+    other_items,
+    preferred_stock,
+    net_income_applicable_to_common_shares
+    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
+    cur = conn.cursor()
+    cur.execute(sql, income_statement)
+    conn.commit()
+    return cur.lastrowid
+
+
+### for testing only
 def main():
     database = "./stock_db.db"
     
