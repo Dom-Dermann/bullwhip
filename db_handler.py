@@ -6,7 +6,8 @@ from sqlite3 import Error
 create_companies_table = """CREATE TABLE IF NOT EXISTS companies (
     symbol text PRIMARY KEY,
     name text NOT NULL,
-    invest integer
+    invest integer,
+    UNIQUE (symbol)
 ); """
 
 create_income_statements_table = """ CREATE TABLE IF NOT EXISTS income_statements (
@@ -35,8 +36,11 @@ create_income_statements_table = """ CREATE TABLE IF NOT EXISTS income_statement
     other_items integer,
     preferred_stock integer,
     net_income_applicable_to_common_shares integer,
-    FOREIGN KEY (symbol) REFERENCES companies (symbol)
+    FOREIGN KEY (symbol) REFERENCES companies (symbol),
+    UNIQUE(symbol, date)
 );"""
+
+### DB methods
 
 def create_connection(db_file):
     # create connection to sqlite db
@@ -60,6 +64,12 @@ def create_table(conn, create_table_sql):
         c.execute(create_table_sql)
     except Error as e:
         print(e)
+
+def insert_company_data(conn, symbol, name, invest):
+    sql = "INSERT OR IGNORE INTO companies VALUES (?,?,?)"
+    cur = conn.cursor()
+    cur.execute(sql, [symbol, name, invest])
+    conn.commit
 
 def insert_income_statement_data(conn, income_statement):
     sql = """ INSERT INTO income_statements (
