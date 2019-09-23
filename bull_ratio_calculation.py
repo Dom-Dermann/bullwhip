@@ -41,7 +41,7 @@ class Company:
             gross_maring_series = gross_maring_series.append(year_margin)
         return(gross_maring_series)
 
-    def calculate_profit_maring(self):
+    def calculate_profit_margin(self):
         #iterate over every entry - every year recorded
         profit_maring_series = pd.Series()
         for index, row in self.income_statement_df.iterrows():
@@ -50,7 +50,13 @@ class Company:
             profit_maring_series = profit_maring_series.append(year_margin)
         return(profit_maring_series)
 
-
+    def calculate_operating_margin(self):
+        operating_margin_series = pd.Series()
+        for index, row in self.income_statement_df.iterrows():
+            operating_margin = float(row['operating_income'] / row['total_revenue'])
+            year_margin = pd.Series(operating_margin, index=[row['year']])
+            operating_margin_series = operating_margin_series.append(year_margin)
+        return(operating_margin_series)
     ### financial modelling prep API stuff
     ###
     ###

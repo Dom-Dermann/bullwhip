@@ -19,8 +19,11 @@ if __name__ == "__main__":
         data_provider.get_income_statement(c_symbol)
 
     company = Company(c_symbol)
-    gross_margin = company.calculate_gross_margin()
-    profit_margin = company.calculate_profit_maring()
-    print(gross_margin)
-    print(profit_margin)
-    
+    # gross_margin = company.calculate_gross_margin()
+    # profit_margin = company.calculate_profit_margin()
+    # operating_margin = company.calculate_operating_margin()
+    # print("Gross margin \n" + str(gross_margin))
+    # print("Operating margin \n" + str(operating_margin))
+    # print("Profit margin \n" + str(profit_margin))
+    data_provider.get_key_statistics(c_symbol)
+

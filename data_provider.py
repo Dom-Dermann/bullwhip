@@ -12,7 +12,7 @@ database = "./stock_db.db"
 # ATTENTION - this may need updating as the yahoo finance website layout changes
 # results are then saved to local sqlite3 database
 def get_income_statement(symbol):
-    URL = f'https://finance.yahoo.com/quote/{symbol}/financials?p=DAI.DE'
+    URL = f'https://finance.yahoo.com/quote/{symbol}/financials?p={symbol}'
 
     response = requests.get(URL)
     # check if website was reachable
@@ -56,6 +56,38 @@ def get_income_statement(symbol):
             # close connection
             db_handler.close_connection(conn)
         
+def get_key_statistics(symbol):
+    URL = f'https://finance.yahoo.com/quote/{symbol}/key-statistics?p={symbol}'
+
+    response = requests.get(URL)
+    # check if website was reachable
+    if response.status_code == 200: 
+        soup = BeautifulSoup(response.text, 'lxml')
+        table = str(soup.findAll('table'))
+        # check if webseite contains a table
+        if table: 
+            converted_table = pd.read_html(table)
+            # get valuation measures
+            valuation_measures_df = pd.DataFrame(converted_table[0])
+            # get stock price history
+            financial_highlights_df = pd.DataFrame(converted_table[1])
+            # get share statistics
+            share_statistics_df = pd.DataFrame(converted_table[2])
+            # get dividends and splits
+            dividends_df = pd.DataFrame(converted_table[3])
+            # get fiscal year
+            fiscal_year_df = pd.DataFrame(converted_table[4])
+            # get profitability ratios
+            profitability_df = pd.DataFrame(converted_table[5])
+            # get management effectiveness ratios
+            management_df = pd.DataFrame(converted_table[6])
+            # get income statement ratios
+            is_ratio_df = pd.DataFrame(converted_table[7])
+            # get balance sheet ratios
+            bs_ratios_df = pd.DataFrame(converted_table[8])
+            # get cash flow statement ratios
+            cf_ratios_df = pd.DataFrame(converted_table[9])
+            
 
 # implements API calls as backup (only works for US traded stocks)
 def get_income_statements_from_API(company_short):
