@@ -12,42 +12,49 @@ database = "./stock_db.db"
 # ATTENTION - this may need updating as the yahoo finance website layout changes
 # results are then saved to local sqlite3 database
 def get_income_statement(symbol):
-    URL = 'https://finance.yahoo.com/quote/DAI.DE/financials?p=DAI.DE'
+    URL = f'https://finance.yahoo.com/quote/{symbol}/financials?p=DAI.DE'
 
     response = requests.get(URL)
-    
-    soup = BeautifulSoup(response.text, 'lxml')
-    table = str(soup.find('table'))
-    if table:
-        df = pd.DataFrame(pd.read_html(table)[0])
-        # convert index and columns
-        df.columns = df.iloc[0]
-        df = df.drop([0])
-        df = df.set_index('Revenue')
+    # check if website was reachable
+    if response.status_code == 200: 
+        soup = BeautifulSoup(response.text, 'lxml')
+        table = str(soup.find('table'))
+        # check if webseite contains a table
+        if table: 
+            df = pd.DataFrame(pd.read_html(table)[0])
+            # convert index and columns
+            df.columns = df.iloc[0]
+            df = df.drop([0])
+            df = df.set_index('Revenue')
 
-        #clean up the data
-        df = df.drop(['Operating Expenses', 'Income from Continuing Operations', 'Non-recurring Events', 'Net Income'])
-        
-        # create connection to DB
-        conn = db_handler.create_connection(database)
+            #clean up the data
+            df = df.drop(['Operating Expenses', 'Income from Continuing Operations', 'Non-recurring Events', 'Net Income'])
+            
+            # create connection to DB
+            conn = db_handler.create_connection(database)
 
-        # create income statements tables if not there yet
-        if conn is not None:
-            db_handler.create_table(conn, db_handler.create_income_statements_table)
-            conn.commit()
-        else:
-            print('Error, DB connection not established.')
+            # create income statements tables if not there yet
+            if conn is not None:
+                db_handler.create_table(conn, db_handler.create_income_statements_table)
+                conn.commit()
+                print("Creating income statement table ...")
+            else:
+                print('Error, DB connection not established.')
 
-        # save income statement data to table
-        # list of data for one year:
-        df = df.swapaxes('index', 'columns')
-        one_year = df.iloc[0].tolist()
-        #get date from dataframe header and add
-        date = list(df.index.values)[1]
-        one_year.insert(0, date)
-        #add company symbol
-        one_year.insert(0, symbol)
-        db_handler.insert_income_statement_data(conn, one_year)
+            # save income statement data to table
+            # list of data for one year:
+            df = df.swapaxes('index', 'columns')
+            # iterate over all years present
+            for index, row in df.iterrows():
+                one_year = row.tolist()
+                # get date from dataframe header and add
+                date = index
+                one_year.insert(0, date)
+                # add company symbol
+                one_year.insert(0, symbol)
+                db_handler.insert_income_statement_data(conn, one_year)
+            # close connection
+            db_handler.close_connection(conn)
         
 
 # implements API calls as backup (only works for US traded stocks)

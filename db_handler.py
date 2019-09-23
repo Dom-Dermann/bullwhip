@@ -50,6 +50,10 @@ def create_connection(db_file):
     
     return conn
 
+def close_connection(conn):
+    conn.close()
+    return True
+
 def create_table(conn, create_table_sql):
     try:
         c = conn.cursor()
