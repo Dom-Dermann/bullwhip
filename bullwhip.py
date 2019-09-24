@@ -25,7 +25,4 @@ if __name__ == "__main__":
     # print("Gross margin \n" + str(gross_margin))
     # print("Operating margin \n" + str(operating_margin))
     # print("Profit margin \n" + str(profit_margin))
-    # data_provider.get_key_statistics(c_symbol)
-    conn = db_handler.create_connection("stock_db.db")
-    db_handler.create_table(conn, db_handler.create_yahoo_ratios_table)
-    db_handler.close_connection(conn)
+    data_provider.get_key_statistics(c_symbol)

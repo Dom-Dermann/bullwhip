@@ -4,6 +4,7 @@ import pandas as pd
 import urllib
 import json
 import db_handler
+import datetime
 
 # path to local database
 database = "./stock_db.db"
@@ -53,6 +54,7 @@ def get_income_statement(symbol):
                 # add company symbol
                 one_year.insert(0, symbol)
                 db_handler.insert_income_statement_data(conn, one_year)
+            print('changes committed to income statements table ...')
             # close connection
             db_handler.close_connection(conn)
         
@@ -87,18 +89,31 @@ def get_key_statistics(symbol):
             bs_ratios_df = pd.DataFrame(converted_table[8])
             # get cash flow statement ratios
             cf_ratios_df = pd.DataFrame(converted_table[9])
-
+            # create one data frame from all tables
+            df_key_ratios = valuation_measures_df.append([financial_highlights_df, share_statistics_df, dividends_df, fiscal_year_df, profitability_df, management_df, is_ratio_df, bs_ratios_df, cf_ratios_df])
+            # prepare df for insertion
+            df_key_ratios = df_key_ratios.swapaxes('index', 'columns')
+            df_key_ratios.columns = df_key_ratios.iloc[0]
+            df_key_ratios = df_key_ratios.drop([0])
+            print(df_key_ratios)
+        
             #create yahoo_ratios table if not exists
             conn = db_handler.create_connection("./stock_db.db")
             if conn is not None:
                 db_handler.create_table(conn, db_handler.create_yahoo_ratios_table)
                 conn.commit()
-                print("Creating income statement table ...")
+                print("Creating key ratios table ...")
             else:
                 print('Error, DB connection not established.')
 
             #commit data ratio data to DB
-            
+            one_year = df_key_ratios.index[0].tolist()
+            print(one_year)
+            # date = datetime.datetime.today().strftime("%Y-%m-%d")
+            # one_year.insert(0, date)
+            # one_year.insert(0, symbol)
+            # db_handler.insert_key_ratio_data(conn, one_year)
+
             #close connection
             db_handler.close_connection(conn)
 

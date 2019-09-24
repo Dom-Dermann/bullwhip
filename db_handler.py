@@ -75,6 +75,10 @@ create_yahoo_ratios_table = """ CREATE TABLE IF NOT EXISTS yahoo_ratios (
     UNIQUE(symbol, year)
 ); """
 
+insert_yahoo_ratios_data = """
+    INSERT INTO yahoo_ratios VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,)
+"""
+
 create_income_statements_table = """ CREATE TABLE IF NOT EXISTS income_statements (
     id integer PRIMARY KEY, 
     symbol text,
@@ -104,6 +108,33 @@ create_income_statements_table = """ CREATE TABLE IF NOT EXISTS income_statement
     FOREIGN KEY (symbol) REFERENCES companies (symbol),
     UNIQUE(symbol, year)
 );"""
+
+insert_income_statement_data = """ INSERT INTO income_statements (
+    symbol,
+    year, 
+    total_revenue, 
+    cost_of_revenue,
+    gross_profit, 
+    research_development, 
+    selling_general_and_administrativ, 
+    non_recurring, 
+    others, 
+    total_operating_expenses, 
+    operating_income, 
+    total_other_income, 
+    EBITA, 
+    interest_expense, 
+    IBT, 
+    income_tax_expense, 
+    minority_interest, 
+    net_income_from_continuing_ops, 
+    discontinued_operations, 
+    extraordinary_items,
+    effect_of_accounting_changes,
+    other_items,
+    preferred_stock,
+    net_income_applicable_to_common_shares
+    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
 
 ### DB methods
 
@@ -137,37 +168,16 @@ def insert_company_data(conn, symbol, name, invest):
     conn.commit
 
 def insert_income_statement_data(conn, income_statement):
-    sql = """ INSERT INTO income_statements (
-    symbol,
-    year, 
-    total_revenue, 
-    cost_of_revenue,
-    gross_profit, 
-    research_development, 
-    selling_general_and_administrativ, 
-    non_recurring, 
-    others, 
-    total_operating_expenses, 
-    operating_income, 
-    total_other_income, 
-    EBITA, 
-    interest_expense, 
-    IBT, 
-    income_tax_expense, 
-    minority_interest, 
-    net_income_from_continuing_ops, 
-    discontinued_operations, 
-    extraordinary_items,
-    effect_of_accounting_changes,
-    other_items,
-    preferred_stock,
-    net_income_applicable_to_common_shares
-    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
     cur = conn.cursor()
-    cur.execute(sql, income_statement)
+    cur.execute(insert_income_statement_data, income_statement)
     conn.commit()
     return cur.lastrowid
 
+def insert_key_ratio_data(con, key_ratios):
+    cur = con.cursor()
+    cur.execute(insert_key_ratio_data, key_ratios)
+    con.commit()
+    return cur.lastrowid
 
 ### for testing only
 def main():
