@@ -87,7 +87,20 @@ def get_key_statistics(symbol):
             bs_ratios_df = pd.DataFrame(converted_table[8])
             # get cash flow statement ratios
             cf_ratios_df = pd.DataFrame(converted_table[9])
+
+            #create yahoo_ratios table if not exists
+            conn = db_handler.create_connection("./stock_db.db")
+            if conn is not None:
+                db_handler.create_table(conn, db_handler.create_yahoo_ratios_table)
+                conn.commit()
+                print("Creating income statement table ...")
+            else:
+                print('Error, DB connection not established.')
+
+            #commit data ratio data to DB
             
+            #close connection
+            db_handler.close_connection(conn)
 
 # implements API calls as backup (only works for US traded stocks)
 def get_income_statements_from_API(company_short):

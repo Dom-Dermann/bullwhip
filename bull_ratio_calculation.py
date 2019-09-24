@@ -57,6 +57,18 @@ class Company:
             year_margin = pd.Series(operating_margin, index=[row['year']])
             operating_margin_series = operating_margin_series.append(year_margin)
         return(operating_margin_series)
+
+
+
+
+
+
+
+
+
+
+
+        
     ### financial modelling prep API stuff
     ###
     ###
