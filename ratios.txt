@@ -1,0 +1,4 @@
+0 Market Cap (intraday) 5  ... Levered Free Cash Flow (ttm)
+1                   1.01T  ...                       44.85B
+
+[1 rows x 59 columns]

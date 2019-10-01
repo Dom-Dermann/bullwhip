@@ -95,7 +95,9 @@ def get_key_statistics(symbol):
             df_key_ratios = df_key_ratios.swapaxes('index', 'columns')
             df_key_ratios.columns = df_key_ratios.iloc[0]
             df_key_ratios = df_key_ratios.drop([0])
-            print(df_key_ratios)
+
+            #trouble shooting - remove in final version
+            pd.DataFrame.to_csv(df_key_ratios, "./ratios.csv")
         
             #create yahoo_ratios table if not exists
             conn = db_handler.create_connection("./stock_db.db")
@@ -107,12 +109,13 @@ def get_key_statistics(symbol):
                 print('Error, DB connection not established.')
 
             #commit data ratio data to DB
-            one_year = df_key_ratios.index[0].tolist()
+            one_year = df_key_ratios.iloc[0].tolist()
+            date = datetime.datetime.today().strftime("%Y-%m-%d")
+            one_year.insert(0, date)
+            one_year.insert(0, symbol)
             print(one_year)
-            # date = datetime.datetime.today().strftime("%Y-%m-%d")
-            # one_year.insert(0, date)
-            # one_year.insert(0, symbol)
-            # db_handler.insert_key_ratio_data(conn, one_year)
+            print(len(one_year))
+            db_handler.insert_key_ratio_data(conn, one_year)
 
             #close connection
             db_handler.close_connection(conn)

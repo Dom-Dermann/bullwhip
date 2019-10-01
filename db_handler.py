@@ -53,6 +53,8 @@ create_yahoo_ratios_table = """ CREATE TABLE IF NOT EXISTS yahoo_ratios (
     last_split_date integer,
     fiscal_year_end date,
     most_recent_quarter date,
+    profit_margin integer,
+    operating_margin integer,
     return_on_assets integer,
     return_on_equity integer,
     revenue integer,
@@ -76,7 +78,69 @@ create_yahoo_ratios_table = """ CREATE TABLE IF NOT EXISTS yahoo_ratios (
 ); """
 
 insert_yahoo_ratios_data = """
-    INSERT INTO yahoo_ratios VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,)
+    INSERT INTO yahoo_ratios(
+    symbol,
+    year,
+    market_cap, 
+    enterprise_value,
+    trailing_pe,
+    forward_pe,
+    peg_ratio,
+    price_sales,
+    price_book,
+    enterprise_value_revenue,
+    enterprise_value_EBITDA,
+    beta,
+    year_change,
+    SandP500_52_week_change,
+    year_high, 
+    year_low,
+    fifty_day_moving_avg,
+    twohundred_day_moving_avg,
+    three_month_vol_avg,
+    ten_day_vol_avg,
+    shares_outstanding,
+    float,
+    percent_held_by_insiders,
+    percent_held_by_institutions,
+    shares_short, 
+    short_ratio,
+    short_percent_of_float,
+    short_percent_of_shares_outstanding,
+    share_short_perivous_month,
+    forward_anual_dividend_rate,
+    forward_anual_dividend_yield,
+    trailing_anual_dividend_rate,
+    trailing_anual_dividend_yield,
+    five_year_average_dividend_yield,
+    payout_ratio,
+    dividend_date,
+    ex_dividend_date,
+    last_split_factor,
+    last_split_date,
+    fiscal_year_end,
+    most_recent_quarter,
+    profit_margin,
+    operating_margin,
+    return_on_assets,
+    return_on_equity,
+    revenue,
+    revenue_per_share,
+    quarterly_revenu_growth,
+    gross_proft,
+    EBITDA,
+    net_income_avi_to_common,
+    diluted_eps,
+    quarterly_earnings_growth,
+    total_cash,
+    total_cash_per_share,
+    total_debt,
+    total_debt_equity,
+    current_ratio,
+    book_value_per_share,
+    operating_cash_flow,
+    levered_free_cash_flow
+    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 """
 
 create_income_statements_table = """ CREATE TABLE IF NOT EXISTS income_statements (
@@ -175,7 +239,7 @@ def insert_income_statement_data(conn, income_statement):
 
 def insert_key_ratio_data(con, key_ratios):
     cur = con.cursor()
-    cur.execute(insert_key_ratio_data, key_ratios)
+    cur.execute(insert_yahoo_ratios_data, key_ratios)
     con.commit()
     return cur.lastrowid
 
